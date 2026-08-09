@@ -1,13 +1,18 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Countdown</title>
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -17,51 +22,161 @@
             text-align: center;
         }
 
-        #countdown {
-            font-size: 10vw;
+        .container {
+            width: 100%;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: clamp(24px, 5vw, 48px);
+            margin-bottom: 40px;
+            font-weight: normal;
+            letter-spacing: 3px;
+        }
+
+        .countdown {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: clamp(8px, 2vw, 25px);
+        }
+
+        .unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .number {
+            font-size: clamp(32px, 9vw, 100px);
             font-weight: bold;
+            line-height: 1;
+            min-width: 1.5em;
         }
 
         .label {
-            font-size: 2vw;
-            margin-top: 10px;
-            opacity: 0.6;
+            margin-top: 12px;
+            font-size: clamp(10px, 2vw, 18px);
+            opacity: 0.5;
+            letter-spacing: 1px;
+        }
+
+        .separator {
+            font-size: clamp(30px, 7vw, 80px);
+            font-weight: bold;
+            margin-bottom: 28px;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 500px) {
+            .countdown {
+                gap: 4px;
+            }
+
+            .number {
+                font-size: 11vw;
+            }
+
+            .separator {
+                font-size: 8vw;
+                margin-bottom: 25px;
+            }
+
+            .label {
+                font-size: 9px;
+                letter-spacing: 0;
+            }
         }
     </style>
 </head>
 
 <body>
 
-<div>
-    <div id="countdown">Loading...</div>
-    <div class="label">DAYS : HOURS : MINUTES : SECONDS</div>
-</div>
+    <div class="container">
 
-<script>
-    // CHANGE THIS DATE
-    const targetDate = new Date("2026-13-31T12:00:00");
+        <h1>COUNTDOWN</h1>
 
-    function updateCountdown() {
-        const now = new Date();
-        const difference = targetDate - now;
+        <div class="countdown">
 
-        if (difference <= 0) {
-            document.getElementById("countdown").innerHTML = "00 : 00 : 00 : 00";
-            return;
+            <div class="unit">
+                <div class="number" id="days">00</div>
+                <div class="label">DAYS</div>
+            </div>
+
+            <div class="separator">:</div>
+
+            <div class="unit">
+                <div class="number" id="hours">00</div>
+                <div class="label">HOURS</div>
+            </div>
+
+            <div class="separator">:</div>
+
+            <div class="unit">
+                <div class="number" id="minutes">00</div>
+                <div class="label">MINUTES</div>
+            </div>
+
+            <div class="separator">:</div>
+
+            <div class="unit">
+                <div class="number" id="seconds">00</div>
+                <div class="label">SECONDS</div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        // December 31, 2026 at 12:00 PM
+        const targetDate = new Date(2026, 11, 31, 12, 0, 0);
+
+        function updateCountdown() {
+
+            const now = new Date();
+            const difference = targetDate.getTime() - now.getTime();
+
+            if (difference <= 0) {
+                document.getElementById("days").textContent = "00";
+                document.getElementById("hours").textContent = "00";
+                document.getElementById("minutes").textContent = "00";
+                document.getElementById("seconds").textContent = "00";
+                return;
+            }
+
+            const days = Math.floor(
+                difference / (1000 * 60 * 60 * 24)
+            );
+
+            const hours = Math.floor(
+                (difference / (1000 * 60 * 60)) % 24
+            );
+
+            const minutes = Math.floor(
+                (difference / (1000 * 60)) % 60
+            );
+
+            const seconds = Math.floor(
+                (difference / 1000) % 60
+            );
+
+            document.getElementById("days").textContent =
+                String(days).padStart(2, "0");
+
+            document.getElementById("hours").textContent =
+                String(hours).padStart(2, "0");
+
+            document.getElementById("minutes").textContent =
+                String(minutes).padStart(2, "0");
+
+            document.getElementById("seconds").textContent =
+                String(seconds).padStart(2, "0");
         }
 
-        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
-        const minutes = Math.floor((difference / (1000 * 60)) % 60);
-        const seconds = Math.floor((difference / 1000) % 60);
-
-        document.getElementById("countdown").innerHTML =
-            `${days} : ${String(hours).padStart(2, "0")} : ${String(minutes).padStart(2, "0")} : ${String(seconds).padStart(2, "0")}`;
-    }
-
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
-</script>
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+    </script>
 
 </body>
 </html>
